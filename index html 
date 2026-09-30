@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Free online image compression, resizing and file information tools.">
+<title>FileFlow — Free File Tools</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+font-family:Arial,sans-serif;
+background:#f7f8fc;
+color:#111827;
+line-height:1.6
+}
+header{
+height:70px;background:white;border-bottom:1px solid #e5e7eb;
+display:flex;align-items:center;justify-content:space-between;
+padding:0 6%;position:sticky;top:0;z-index:10
+}
+.logo{font-size:24px;font-weight:800;color:#111827;text-decoration:none}
+nav{display:flex;gap:25px}
+nav a{color:#4b5563;text-decoration:none}
+
+.hero{
+text-align:center;padding:90px 20px;background:white
+}
+.badge{
+display:inline-block;padding:7px 14px;border-radius:30px;
+background:#eef2ff;color:#4f46e5;font-size:14px;margin-bottom:20px
+}
+.hero h1{
+font-size:clamp(40px,8vw,72px);
+line-height:1.05;max-width:850px;margin:auto
+}
+.hero p{
+max-width:650px;margin:22px auto;color:#6b7280;font-size:19px
+}
+.primary,button{
+border:0;cursor:pointer;border-radius:10px;
+padding:13px 20px;font-size:16px;font-weight:700
+}
+.primary{
+display:inline-block;background:#111827;color:white;
+text-decoration:none
+}
+
+section.tools{
+max-width:1150px;margin:auto;padding:80px 20px
+}
+h2{font-size:38px}
+.section-text{color:#6b7280;margin-bottom:30px}
+
+.grid{
+display:grid;grid-template-columns:repeat(3,1fr);gap:20px
+}
+.card{
+background:white;border:1px solid #e5e7eb;
+border-radius:18px;padding:30px;
+transition:.2s
+}
+.card:hover{
+transform:translateY(-4px);
+box-shadow:0 15px 35px rgba(0,0,0,.08)
+}
+.icon{font-size:35px;margin-bottom:15px}
+.card h3{font-size:22px;margin-bottom:8px}
+.card p{color:#6b7280;min-height:55px;margin-bottom:20px}
+
+.workspace{
+max-width:850px;margin:auto;padding:50px 20px 80px
+}
+.back{
+background:transparent;color:#111827;padding-left:0
+}
+.panel{
+margin-top:25px;background:white;border:1px solid #e5e7eb;
+border-radius:18px;padding:30px
+}
+.panel h2{font-size:32px;margin-bottom:8px}
+.panel p{color:#6b7280;margin-bottom:25px}
+
+input[type=file]{
+width:100%;padding:18px;border:2px dashed #d1d5db;
+border-radius:12px;background:#f9fafb
+}
+.control{margin:25px 0}
+.control label{display:block;margin-bottom:8px;font-weight:700}
+input[type=range]{width:100%}
+
+.dimensions{
+display:grid;grid-template-columns:1fr 1fr;
+gap:15px;margin:20px 0
+}
+.dimensions label{
+display:block;margin-bottom:6px;font-weight:700
+}
+.dimensions input{
+width:100%;padding:13px;
+border:1px solid #d1d5db;border-radius:8px
+}
+
+.result{
+margin-top:25px;padding:20px;
+background:#f3f4f6;border-radius:12px
+}
+.download{
+display:inline-block;margin-top:15px;padding:12px 18px;
+background:#111827;color:white;border-radius:8px;
+text-decoration:none;font-weight:700
+}
+
+.about{
+background:white;text-align:center;padding:80px 20px
+}
+.about p{
+max-width:650px;margin:15px auto;color:#6b7280
+}
+footer{text-align:center;padding:30px;color:#6b7280}
+.hidden{display:none}
+
+@media(max-width:750px){
+.grid{grid-template-columns:1fr}
+.hero{padding:65px 20px}
+.dimensions{grid-template-columns:1fr}
+nav{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<a href="#" class="logo">FileFlow</a>
+<nav>
+<a href="#tools">Tools</a>
+<a href="#about">About</a>
+</nav>
+</header>
+
+<section class="hero">
+<div class="badge">100% Browser-Based</div>
+
+<h1>Simple tools for your files.</h1>
+
+<p>
+Compress images, resize images and inspect files directly in your browser.
+</p>
+
+<a href="#tools" class="primary">Explore Tools</a>
+</section>
+
+<section id="tools" class="tools">
+
+<h2>File Tools</h2>
+<p class="section-text">Choose a tool and get started.</p>
+
+<div class="grid">
+
+<div class="card">
+<div class="icon">🗜️</div>
+<h3>Image Compressor</h3>
+<p>Reduce image file size directly in your browser.</p>
+<button onclick="openTool('compress')">Open Tool</button>
+</div>
+
+<div class="card">
+<div class="icon">📐</div>
+<h3>Image Resizer</h3>
+<p>Resize JPG, PNG and WebP images.</p>
+<button onclick="openTool('resize')">Open Tool</button>
+</div>
+
+<div class="card">
+<div class="icon">📄</div>
+<h3>File Information</h3>
+<p>Check file name, type and size instantly.</p>
+<button onclick="openTool('info')">Open Tool</button>
+</div>
+
+</div>
+</section>
+
+<section id="workspace" class="workspace hidden">
+
+<button class="back" onclick="closeTool()">← Back to tools</button>
+
+<div id="compressPanel" class="panel hidden">
+
+<h2>Image Compressor</h2>
+<p>Choose an image to compress.</p>
+
+<input id="compressInput" type="file" accept="image/*">
+
+<div class="control">
+<label>
+Quality: <span id="qualityValue">70%</span>
+</label>
+
+<input id="quality" type="range" min="10" max="100" value="70">
+</div>
+
+<button class="primary" onclick="compressImage()">
+Compress Image
+</button>
+
+<div id="compressResult"></div>
+
+</div>
+
+
+<div id="resizePanel" class="panel hidden">
+
+<h2>Image Resizer</h2>
+<p>Choose an image and enter the new dimensions.</p>
+
+<input id="resizeInput" type="file" accept="image/*">
+
+<div class="dimensions">
+
+<div>
+<label>Width</label>
+<input id="resizeWidth" type="number" placeholder="Width">
+</div>
+
+<div>
+<label>Height</label>
+<input id="resizeHeight" type="number" placeholder="Height">
+</div>
+
+</div>
+
+<button class="primary" onclick="resizeImage()">
+Resize Image
+</button>
+
+<div id="resizeResult"></div>
+
+</div>
+
+
+<div id="infoPanel" class="panel hidden">
+
+<h2>File Information</h2>
+<p>Choose any file to inspect it.</p>
+
+<input id="infoInput" type="file" onchange="showFileInfo()">
+
+<div id="fileInfo"></div>
+
+</div>
+
+</section>
+
+
+<section id="about" class="about">
+
+<h2>Private by design</h2>
+
+<p>
+Image processing happens inside your browser.
+Files selected for these tools are not uploaded to a server by this website.
+</p>
+
+</section>
+
+
+<footer>
+<p>© 2026 FileFlow. Built for the web.</p>
+</footer>
+
+
+<script>
+
+function hidePanels(){
+
+document.querySelectorAll(".panel").forEach(function(panel){
+panel.classList.add("hidden");
+});
+
+}
+
+
+function openTool(tool){
+
+document.getElementById("workspace").classList.remove("hidden");
+
+hidePanels();
+
+document.getElementById(tool+"Panel").classList.remove("hidden");
+
+document.getElementById("workspace").scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+function closeTool(){
+
+document.getElementById("workspace").classList.add("hidden");
+
+document.getElementById("tools").scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+const quality=document.getElementById("quality");
+
+quality.addEventListener("input",function(){
+
+document.getElementById("qualityValue").textContent=
+quality.value+"%";
+
+});
+
+
+function compressImage(){
+
+const input=document.getElementById("compressInput");
+const result=document.getElementById("compressResult");
+
+if(!input.files.length){
+
+result.innerHTML=
+'<div class="result">Please choose an image first.</div>';
+
+return;
+
+}
+
+const file=input.files[0];
+
+if(!file.type.startsWith("image/")){
+
+result.innerHTML=
+'<div class="result">Please choose an image file.</div>';
+
+return;
+
+}
+
+const reader=new FileReader();
+
+reader.onload=function(event){
+
+const image=new Image();
+
+image.onload=function(){
+
+const canvas=document.createElement("canvas");
+
+canvas.width=image.width;
+canvas.height=image.height;
+
+const context=canvas.getContext("2d");
+
+context.drawImage(image,0,0);
+
+const compressionQuality=
+Number(quality.value)/100;
+
+canvas.toBlob(function(blob){
+
+const url=URL.createObjectURL(blob);
+
+result.innerHTML=`
+
+<div class="result">
+
+<strong>Compression complete</strong>
+
+<p>Original: ${formatBytes(file.size)}</p>
+
+<p>New size: ${formatBytes(blob.size)}</p>
+
+<a class="download"
+href="${url}"
+download="compressed-image.jpg">
+
+Download Image
+
+</a>
+
+</div>
+
+`;
+
+},"image/jpeg",compressionQuality);
+
+};
+
+image.src=event.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+
+function resizeImage(){
+
+const input=document.getElementById("resizeInput");
+
+const width=
+Number(document.getElementById("resizeWidth").value);
+
+const height=
+Number(document.getElementById("resizeHeight").value);
+
+const result=
+document.getElementById("resizeResult");
+
+
+if(!input.files.length){
+
+result.innerHTML=
+'<div class="result">Please choose an image first.</div>';
+
+return;
+
+}
+
+
+if(!width || !height || width<1 || height<1){
+
+result.innerHTML=
+'<div class="result">Enter a valid width and height.</div>';
+
+return;
+
+}
+
+
+const reader=new FileReader();
+
+reader.onload=function(event){
+
+const image=new Image();
+
+image.onload=function(){
+
+const canvas=document.createElement("canvas");
+
+canvas.width=width;
+canvas.height=height;
+
+const context=canvas.getContext("2d");
+
+context.drawImage(
+image,
+0,
+0,
+width,
+height
+);
+
+
+canvas.toBlob(function(blob){
+
+const url=URL.createObjectURL(blob);
+
+result.innerHTML=`
+
+<div class="result">
+
+<strong>Resize complete</strong>
+
+<p>
+New dimensions:
+${width} × ${height}px
+</p>
+
+<a class="download"
+href="${url}"
+download="resized-image.jpg">
+
+Download Image
+
+</a>
+
+</div>
+
+`;
+
+},"image/jpeg",0.9);
+
+};
+
+image.src=event.target.result;
+
+};
+
+reader.readAsDataURL(input.files[0]);
+
+}
+
+
+function showFileInfo(){
+
+const input=document.getElementById("infoInput");
+
+const output=document.getElementById("fileInfo");
+
+if(!input.files.length){
+
+output.innerHTML="";
+
+return;
+
+}
+
+const file=input.files[0];
+
+output.innerHTML=`
+
+<div class="result">
+
+<p>
+<strong>Name:</strong>
+${escapeHTML(file.name)}
+</p>
+
+<p>
+<strong>Type:</strong>
+${escapeHTML(file.type || "Unknown")}
+</p>
+
+<p>
+<strong>Size:</strong>
+${formatBytes(file.size)}
+</p>
+
+<p>
+<strong>Last modified:</strong>
+${new Date(file.lastModified).toLocaleString()}
+</p>
+
+</div>
+
+`;
+
+}
+
+
+function formatBytes(bytes){
+
+if(bytes===0)return "0 Bytes";
+
+const units=[
+"Bytes",
+"KB",
+"MB",
+"GB"
+];
+
+const index=
+Math.floor(
+Math.log(bytes)/Math.log(1024)
+);
+
+return(
+bytes/Math.pow(1024,index)
+).toFixed(2)
++" "+
+units[index];
+
+}
+
+
+function escapeHTML(value){
+
+return value
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+</script>
+
+</body>
+</html>
